@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: ghcr.io/farah-ben-harb/devsecops-incident-platform:dev
+          image: ghcr.io/farah-ben-harb/devsecops-incident-platform-api:dev
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -48,4 +48,3 @@ spec:
             initialDelaySeconds: 20
             periodSeconds: 20
             timeoutSeconds: 5
-
