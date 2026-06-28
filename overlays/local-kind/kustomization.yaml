@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: devsecops-platform
+
+resources:
+  - ../../base
+
+images:
+  - name: ghcr.io/farah-ben-harb/devsecops-incident-platform
+    newName: ghcr.io/farah-ben-harb/devsecops-incident-platform
+    newTag: dev
+
