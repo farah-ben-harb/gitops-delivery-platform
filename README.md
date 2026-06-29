@@ -91,7 +91,8 @@ The repository includes a `ServiceMonitor` so the Prometheus Operator from `kube
 
 The target configuration is:
 
-- Namespace: `devsecops-platform`
+- ServiceMonitor namespace: `devsecops-platform`
+- Target namespace: `devsecops-platform`
 - Service: `devsecops-incident-platform`
 - Port: `http`
 - Path: `/metrics`

@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: devsecops-incident-platform
-  namespace: monitoring
+  namespace: devsecops-platform
   labels:
     release: kube-prometheus-stack
 spec:
