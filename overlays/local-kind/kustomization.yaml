@@ -9,4 +9,4 @@ resources:
 images:
   - name: ghcr.io/farah-ben-harb/devsecops-incident-platform-api
     newName: ghcr.io/farah-ben-harb/devsecops-incident-platform-api
-    newTag: dev
+    newTag: sha-3d30f92
