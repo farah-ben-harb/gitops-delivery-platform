@@ -85,6 +85,28 @@ The PAT used for this secret should have at least:
 
 - `read:packages`
 
+## Prometheus Scraping
+
+The repository includes a `ServiceMonitor` so the Prometheus Operator from `kube-prometheus-stack` can scrape the application metrics endpoint.
+
+The target configuration is:
+
+- Namespace: `devsecops-platform`
+- Service: `devsecops-incident-platform`
+- Port: `http`
+- Path: `/metrics`
+- Interval: `30s`
+
+The `ServiceMonitor` lives in:
+
+- `base/app-servicemonitor.yaml`
+
+The app `Service` carries:
+
+- `monitoring: enabled`
+
+and the `ServiceMonitor` selects that label.
+
 ## Notes About Secrets
 
 This repository includes a committed `secret-example.yaml` with clearly fake lab values so the structure is documented.
