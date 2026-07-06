@@ -108,6 +108,29 @@ The app `Service` carries:
 
 and the `ServiceMonitor` selects that label.
 
+## Grafana Dashboard
+
+The repository also includes a Grafana dashboard ConfigMap for the application:
+
+- `base/grafana-dashboard-configmap.yaml`
+
+It is labeled with:
+
+- `grafana_dashboard: "1"`
+
+That allows the `kube-prometheus-stack` Grafana sidecar to auto-discover and provision it without any manual import step.
+
+The dashboard is focused on the portfolio use case and includes:
+
+- app uptime
+- throughput
+- p95 latency
+- error volume
+- request rate by endpoint
+- latency by endpoint
+- incident volume by severity
+- request summary tables for the API
+
 ## Notes About Secrets
 
 This repository includes a committed `secret-example.yaml` with clearly fake lab values so the structure is documented.
