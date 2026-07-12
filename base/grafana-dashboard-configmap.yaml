@@ -488,7 +488,7 @@ data:
           },
           "gridPos": {
             "h": 8,
-            "w": 10,
+            "w": 24,
             "x": 0,
             "y": 12
           },
@@ -528,86 +528,6 @@ data:
           ],
           "title": "Incidents By Severity",
           "type": "piechart"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "mappings": [],
-              "unit": "short"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 14,
-            "x": 10,
-            "y": 12
-          },
-          "id": 8,
-          "options": {
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "Value"
-              }
-            ]
-          },
-          "pluginVersion": "13.1.0",
-          "targets": [
-            {
-              "editorMode": "code",
-              "expr": "sum by (service_name, severity) (incident_created_total)",
-              "format": "table",
-              "instant": true,
-              "legendFormat": "{{service_name}} / {{severity}}",
-              "range": false,
-              "refId": "A"
-            }
-          ],
-          "title": "Incident Volume By Service / Severity",
-          "transformations": [
-            {
-              "id": "labelsToFields",
-              "options": {
-                "mode": "columns"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true
-                },
-                "indexByName": {
-                  "Value": 2,
-                  "service_name": 0,
-                  "severity": 1
-                },
-                "renameByName": {
-                  "Value": "Total Incidents",
-                  "service_name": "Service",
-                  "severity": "Severity"
-                }
-              }
-            }
-          ],
-          "type": "table"
         },
         {
           "datasource": {
@@ -810,6 +730,6 @@ data:
       "timezone": "",
       "title": "DevSecOps Incident Platform Overview",
       "uid": "incident-platform-overview",
-      "version": 1,
+      "version": 2,
       "weekStart": ""
     }
