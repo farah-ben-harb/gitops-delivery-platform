@@ -319,3 +319,17 @@ That repository contains:
 - Dockerfile
 - Jenkinsfile
 - metrics instrumentation
+
+## Branching and Commits
+
+- Use branches such as `feat/<area>`, `fix/<area>`, `docs/<area>`, or `gitops/<area>`
+- Keep commits small and reviewable
+- Prefer Conventional Commits such as `chore(gitops): update image tag`
+- Avoid mixing manifest changes with unrelated application work
+
+## Contributing
+
+- Update only the deployment state you intend to change
+- Keep secret values outside Git
+- Use immutable image references whenever possible
+- Document rollout risk for changes that may affect availability
