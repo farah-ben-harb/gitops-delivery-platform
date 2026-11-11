@@ -15,12 +15,23 @@ spec:
       labels:
         app: devsecops-incident-platform
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: ghcr-pull-secret
       containers:
         - name: api
           image: ghcr.io/farah-ben-harb/devsecops-incident-platform-api:dev
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8000
               name: http

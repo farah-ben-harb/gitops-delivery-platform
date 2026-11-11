@@ -50,6 +50,7 @@ base/
   namespace.yaml
   postgres-deployment.yaml
   postgres-service.yaml
+  postgres-pvc.yaml
   secret-example.yaml
 overlays/
   local-kind/
@@ -65,7 +66,7 @@ The manifests in this repository provision:
 - PostgreSQL deployment
 - application and database services
 - non-sensitive configuration through `ConfigMap`
-- example secret structure
+- example secret structure, kept out of the rendered base
 - Prometheus `ServiceMonitor`
 - Grafana dashboard ConfigMap
 - Argo CD `Application`
@@ -157,6 +158,11 @@ kubectl create secret docker-registry ghcr-pull-secret \
 The GitHub PAT for this secret should have at least:
 
 - `read:packages`
+
+The base kustomization does not deploy `secret-example.yaml`. Create the real
+`incident-platform-secrets` outside Git or through a secret manager before
+applying the application. The placeholder password must never be used for a
+shared or production cluster.
 
 If the package remains private and repository access is also required, include:
 
@@ -297,6 +303,13 @@ This repository includes:
 - `secret-example.yaml`
 
 It exists only to document the expected secret structure using fake placeholder values.
+
+It is intentionally excluded from `base/kustomization.yaml`; it must not be
+created automatically by Argo CD.
+
+PostgreSQL data is stored in the `incident-postgres-data` PVC rather than
+`emptyDir`. This protects data across a Pod restart, but it is not a backup:
+capture and test database backups before destructive cluster operations.
 
 For real environments:
 
