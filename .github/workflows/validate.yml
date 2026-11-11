@@ -1,0 +1,82 @@
+name: Validate GitOps manifests
+
+on:
+  pull_request:
+  push:
+    branches: [main, "fix/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  manifests:
+    name: Kustomize and manifest validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.31.4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install manifest validation dependency
+        run: python -m pip install PyYAML==6.0.2
+
+      - name: Render local-kind overlay
+        run: kubectl kustomize overlays/local-kind > rendered.yaml
+
+      - name: Validate rendered resources
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          import yaml
+
+          documents = [
+              document
+              for document in yaml.safe_load_all(Path("rendered.yaml").read_text())
+              if document
+          ]
+          kinds = {document.get("kind") for document in documents}
+          assert "PersistentVolumeClaim" in kinds
+          assert "Secret" not in kinds, "Live secrets must not be rendered from Git"
+
+          pvc = next(document for document in documents if document["kind"] == "PersistentVolumeClaim")
+          assert pvc["metadata"]["name"] == "incident-postgres-data"
+          assert pvc["spec"]["resources"]["requests"]["storage"] == "1Gi"
+
+          deployments = {
+              document["metadata"]["name"]: document
+              for document in documents
+              if document["kind"] == "Deployment"
+          }
+          assert set(deployments) == {"devsecops-incident-platform", "incident-postgres"}
+          for deployment in deployments.values():
+              pod_spec = deployment["spec"]["template"]["spec"]
+              assert pod_spec["securityContext"]["seccompProfile"]["type"] == "RuntimeDefault"
+              for container in pod_spec["containers"]:
+                  security_context = container["securityContext"]
+                  assert security_context["runAsNonRoot"] is True
+                  assert security_context["allowPrivilegeEscalation"] is False
+                  assert "ALL" in security_context["capabilities"]["drop"]
+
+          image = deployments["devsecops-incident-platform"]["spec"]["template"]["spec"]["containers"][0]["image"]
+          assert ":sha-" in image, image
+          assert ":dev" not in Path("rendered.yaml").read_text()
+
+          application = yaml.safe_load(Path("argocd/application.yaml").read_text())
+          assert application["spec"]["source"]["path"] == "overlays/local-kind"
+          assert application["spec"]["source"]["targetRevision"] == "main"
+          PY
+
+      - name: Scan repository for secrets
+        uses: gitleaks/gitleaks-action@v3
